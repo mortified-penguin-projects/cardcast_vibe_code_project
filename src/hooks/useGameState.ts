@@ -9,11 +9,12 @@ export function useGameState(gameCode: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const gameIdRef = useRef<string | null>(null);
+  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!gameCode) return;
 
-    async function loadGame() {
+    async function loadGameOnce() {
       try {
         const { data: gameData, error: gameError } = await supabase
           .from('games')
@@ -52,46 +53,45 @@ export function useGameState(gameCode: string) {
       }
     }
 
-    loadGame();
+    async function pollUpdates() {
+      if (!gameIdRef.current) return;
 
-    const channel = supabase
-      .channel(`game:${gameCode}`)
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'games', filter: `game_code=eq.${gameCode}` },
-        payload => { setGame(payload.new as Game); }
-      )
-      .on(
-        'postgres_changes',
-        // FIX #7: filter players subscription to this game only
-        { event: '*', schema: 'public', table: 'players', filter: `game_id=eq.${gameIdRef.current}` },
-        payload => {
-          if (payload.eventType === 'INSERT') {
-            setPlayers(prev =>
-              [...prev, payload.new as Player].sort((a, b) => a.position - b.position)
-            );
-          } else if (payload.eventType === 'UPDATE') {
-            setPlayers(prev =>
-              prev.map(p => (p.id === payload.new.id ? (payload.new as Player) : p))
-            );
-          } else if (payload.eventType === 'DELETE') {
-            setPlayers(prev => prev.filter(p => p.id !== (payload.old as Player).id));
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'game_actions' },
-        payload => {
-          const action = payload.new as GameAction;
-          // Only include actions for this game
-          if (gameIdRef.current && action.game_id !== gameIdRef.current) return;
-          setActions(prev => [action, ...prev].slice(0, 10));
-        }
-      )
-      .subscribe();
+      try {
+        const { data: gameData, error: gameError } = await supabase
+          .from('games')
+          .select('*')
+          .eq('id', gameIdRef.current)
+          .maybeSingle();
 
-    return () => { channel.unsubscribe(); };
+        if (gameData && !gameError) setGame(gameData as Game);
+
+        const { data: playersData, error: playersError } = await supabase
+          .from('players')
+          .select('*')
+          .eq('game_id', gameIdRef.current)
+          .order('position');
+
+        if (playersData && !playersError) setPlayers(playersData as Player[]);
+
+        const { data: actionsData, error: actionsError } = await supabase
+          .from('game_actions')
+          .select('*')
+          .eq('game_id', gameIdRef.current)
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        if (actionsData && !actionsError) setActions(actionsData as GameAction[]);
+      } catch (err) {
+        console.error('Poll error:', err);
+      }
+    }
+
+    loadGameOnce();
+    pollIntervalRef.current = setInterval(pollUpdates, 500);
+
+    return () => {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+    };
   }, [gameCode]);
 
   return { game, players, actions, loading, error };
