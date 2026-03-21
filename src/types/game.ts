@@ -57,4 +57,5 @@ export interface HandRank {
   rank: number;
   name: string;
   cards: Card[];
+  tiebreakers: number[];
 }
