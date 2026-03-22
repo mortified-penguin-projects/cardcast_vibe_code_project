@@ -137,22 +137,12 @@ export function PlayerView({ gameCode, playerId }: PlayerViewProps) {
           ))}
         </div>
 
-        {/* Community cards */}
-        <div className="flex justify-center gap-2 mb-6">
-          {Array.from({ length: 5 }).map((_, i) => {
-            const card: Card | undefined = game.community_cards[i];
-            return card
-              ? <PlayingCard key={i} card={card} size="small" />
-              : <PlayingCard key={i} size="small" faceDown />;
-          })}
-        </div>
-
-        {/* Pot display */}
-        <div className="text-right mb-4">
-          <div className="text-4xl font-light">{game.pot}</div>
+        {/* Pot and betting info */}
+        <div className="text-center mb-6">
+          <div className="text-3xl font-light">{game.pot}</div>
           <div className="text-sm font-light opacity-60">POT</div>
           {game.current_bet > 0 && (
-            <div className="text-sm font-light opacity-60 mt-1">Bet: {game.current_bet}</div>
+            <div className="text-sm font-light opacity-60 mt-2">To call: {Math.max(0, game.current_bet - currentPlayer.current_bet)}</div>
           )}
         </div>
 

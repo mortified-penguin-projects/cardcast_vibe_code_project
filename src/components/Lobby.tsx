@@ -43,25 +43,7 @@ export function Lobby({ onJoinGame }: LobbyProps) {
 
       if (gameError) throw gameError;
 
-      // FIX #8: Insert the host as a player so they can participate
-      const { data: playerData, error: playerError } = await supabase
-        .from('players')
-        .insert({
-          game_id: gameData.id,
-          name: playerName.trim(),
-          chips: 1000,
-          position: 0,
-          status: 'active',
-          is_host: true,
-          hole_cards: [],
-          current_bet: 0
-        })
-        .select()
-        .single();
-
-      if (playerError) throw playerError;
-
-      onJoinGame(code, playerData.id, true);
+      onJoinGame(code, '', true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create game');
     } finally {
