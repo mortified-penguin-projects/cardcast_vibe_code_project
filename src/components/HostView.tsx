@@ -99,10 +99,13 @@ export function HostView({ gameCode }: HostViewProps) {
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <div className="text-2xl font-light">ROOM: {gameCode}</div>
-            <div className="text-sm font-light opacity-60 mt-1">Host: {game.host_name}</div>
+        <div className="flex justify-between items-center mb-8 pb-8 border-b border-gray-800">
+          <div className="flex items-center gap-4">
+            <img src="/IMG_4336.PNG" alt="Cardcast" className="h-12 w-auto" />
+            <div>
+              <div className="text-2xl font-light">ROOM: {gameCode}</div>
+              <div className="text-sm font-light opacity-60 mt-1">Host: {game.host_name}</div>
+            </div>
           </div>
           <div className="flex gap-4 items-center">
             {roundComplete && game.status === 'in_progress' && game.betting_round !== 'river' && (
@@ -111,7 +114,7 @@ export function HostView({ gameCode }: HostViewProps) {
               </button>
             )}
             {roundComplete && game.status === 'in_progress' && game.betting_round === 'river' && (
-              <button onClick={handleShowdown} className="px-6 py-3 bg-yellow-400 text-black font-light rounded-lg hover:bg-yellow-300 transition-colors">
+              <button onClick={handleShowdown} className="px-6 py-3 bg-red-600 text-white font-light rounded-lg hover:bg-red-700 transition-colors">
                 Showdown
               </button>
             )}

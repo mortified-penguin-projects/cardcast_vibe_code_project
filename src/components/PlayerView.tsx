@@ -113,6 +113,12 @@ export function PlayerView({ gameCode, playerId }: PlayerViewProps) {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
+      {/* Header */}
+      <div className="border-b border-gray-800 p-4 flex items-center gap-3">
+        <img src="/IMG_4336.PNG" alt="Cardcast" className="h-8 w-auto" />
+        <div className="text-sm font-light opacity-60">{gameCode}</div>
+      </div>
+
       <div className="flex-1 flex flex-col p-4">
 
         {/* Other players */}
@@ -189,7 +195,7 @@ export function PlayerView({ gameCode, playerId }: PlayerViewProps) {
                 <button
                   onClick={() => handleAction('raise', raiseAmount || minRaise)}
                   disabled={isProcessing || currentPlayer.chips < minRaise}
-                  className="flex-1 py-4 bg-gray-700 text-white font-light rounded-lg text-lg hover:bg-gray-600 transition-colors disabled:opacity-50"
+                  className="flex-1 py-4 bg-red-600 text-white font-light rounded-lg text-lg hover:bg-red-700 transition-colors disabled:opacity-50"
                 >
                   {canCheck ? 'Bet' : 'Raise'} {raiseAmount || minRaise}
                 </button>

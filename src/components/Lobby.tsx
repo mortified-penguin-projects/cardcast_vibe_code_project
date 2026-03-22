@@ -104,8 +104,10 @@ export function Lobby({ onJoinGame }: LobbyProps) {
   if (mode === 'menu') {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-4">
-        <div className="max-w-md w-full space-y-6">
-          <h1 className="text-5xl font-light text-white text-center mb-12">POKER</h1>
+        <div className="max-w-md w-full space-y-8">
+          <div className="flex justify-center mb-8">
+            <img src="/IMG_4336.PNG" alt="Cardcast" className="h-48 w-auto" />
+          </div>
           <button onClick={() => setMode('create')} className="w-full py-6 bg-white text-black text-xl font-light rounded-lg hover:bg-gray-200 transition-colors">
             Host Game
           </button>
@@ -122,14 +124,17 @@ export function Lobby({ onJoinGame }: LobbyProps) {
       <div className="min-h-screen bg-black flex items-center justify-center p-4">
         <div className="max-w-md w-full space-y-6">
           <button onClick={() => setMode('menu')} className="text-white font-light mb-4 hover:opacity-60 transition-opacity">← Back</button>
-          <h2 className="text-3xl font-light text-white mb-8">Host Game</h2>
+          <div className="flex items-center gap-3 mb-8">
+            <img src="/IMG_4336.PNG" alt="Cardcast" className="h-12 w-auto" />
+            <h2 className="text-3xl font-light text-white">Host Game</h2>
+          </div>
           <input
             type="text" placeholder="Your name" value={playerName}
             onChange={e => setPlayerName(e.target.value)}
-            className="w-full px-6 py-4 bg-gray-900 text-white font-light text-lg rounded-lg border border-gray-800 focus:border-white outline-none transition-colors"
+            className="w-full px-6 py-4 bg-gray-900 text-white font-light text-lg rounded-lg border border-gray-800 focus:border-red-600 outline-none transition-colors"
           />
           {error && <div className="text-red-500 font-light text-sm">{error}</div>}
-          <button onClick={handleCreateGame} disabled={loading} className="w-full py-4 bg-white text-black text-lg font-light rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50">
+          <button onClick={handleCreateGame} disabled={loading} className="w-full py-4 bg-red-600 text-white text-lg font-light rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50">
             {loading ? 'Creating...' : 'Create Game'}
           </button>
         </div>
@@ -141,20 +146,23 @@ export function Lobby({ onJoinGame }: LobbyProps) {
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-6">
         <button onClick={() => setMode('menu')} className="text-white font-light mb-4 hover:opacity-60 transition-opacity">← Back</button>
-        <h2 className="text-3xl font-light text-white mb-8">Join Game</h2>
+        <div className="flex items-center gap-3 mb-8">
+          <img src="/IMG_4336.PNG" alt="Cardcast" className="h-12 w-auto" />
+          <h2 className="text-3xl font-light text-white">Join Game</h2>
+        </div>
         <input
           type="text" placeholder="Your name" value={playerName}
           onChange={e => setPlayerName(e.target.value)}
-          className="w-full px-6 py-4 bg-gray-900 text-white font-light text-lg rounded-lg border border-gray-800 focus:border-white outline-none transition-colors"
+          className="w-full px-6 py-4 bg-gray-900 text-white font-light text-lg rounded-lg border border-gray-800 focus:border-red-600 outline-none transition-colors"
         />
         <input
           type="text" placeholder="Game code" value={gameCode}
           onChange={e => setGameCode(e.target.value.toUpperCase())}
-          className="w-full px-6 py-4 bg-gray-900 text-white font-light text-lg rounded-lg border border-gray-800 focus:border-white outline-none transition-colors uppercase"
+          className="w-full px-6 py-4 bg-gray-900 text-white font-light text-lg rounded-lg border border-gray-800 focus:border-red-600 outline-none transition-colors uppercase"
           maxLength={4}
         />
         {error && <div className="text-red-500 font-light text-sm">{error}</div>}
-        <button onClick={handleJoinGame} disabled={loading} className="w-full py-4 bg-white text-black text-lg font-light rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50">
+        <button onClick={handleJoinGame} disabled={loading} className="w-full py-4 bg-red-600 text-white text-lg font-light rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50">
           {loading ? 'Joining...' : 'Join Game'}
         </button>
       </div>
