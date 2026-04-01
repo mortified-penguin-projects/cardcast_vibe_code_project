@@ -6,7 +6,7 @@ import { PlayingCard } from './PlayingCard';
 import { PlayerAvatar } from './PlayerAvatar';
 import { calculateWinProbability } from '../game/handEvaluator';
 import { getNextActivePlayerIndex } from '../game/gameController';
-import { ActionType, Card } from '../types/game';
+import { ActionType } from '../types/game';
 
 interface PlayerViewProps {
   gameCode: string;
@@ -112,9 +112,9 @@ export function PlayerView({ gameCode, playerId }: PlayerViewProps) {
   const maxRaise = currentPlayer.chips;
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-red-950 text-white flex flex-col">
       {/* Header */}
-      <div className="border-b border-gray-800 p-4 flex items-center gap-3">
+      <div className="border-b border-red-900/30 p-4 flex items-center gap-3 bg-black/50">
         <img src="/IMG_4336.PNG" alt="Cardcast" className="h-8 w-auto" />
         <div className="text-sm font-light opacity-60">{gameCode}</div>
       </div>

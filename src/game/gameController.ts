@@ -27,9 +27,9 @@ export function getNextActivePlayerIndex(startIndex: number, players: Player[]):
  * (or are all-in), meaning the betting round is over.
  */
 export function isBettingRoundComplete(players: Player[], currentBet: number): boolean {
-  const activePlayers = players.filter(p => p.status === 'active');
-  if (activePlayers.length <= 1) return true;
-  return activePlayers.every(p => p.current_bet === currentBet);
+  const notFoldedPlayers = players.filter(p => p.status !== 'folded' && p.status !== 'out');
+  if (notFoldedPlayers.length <= 1) return true;
+  return notFoldedPlayers.every(p => p.current_bet === currentBet || p.status === 'all-in');
 }
 
 export function startNewHand(

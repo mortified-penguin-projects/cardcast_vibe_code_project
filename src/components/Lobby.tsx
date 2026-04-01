@@ -22,7 +22,7 @@ export function Lobby({ onJoinGame }: LobbyProps) {
     try {
       const code = generateGameCode();
 
-      const { data: gameData, error: gameError } = await supabase
+      const { error: gameError } = await supabase
         .from('games')
         .insert({
           game_code: code,
@@ -103,15 +103,15 @@ export function Lobby({ onJoinGame }: LobbyProps) {
 
   if (mode === 'menu') {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-red-950 flex items-center justify-center p-4">
         <div className="max-w-md w-full space-y-8">
           <div className="flex justify-center mb-8">
             <img src="/IMG_4336.PNG" alt="Cardcast" className="h-48 w-auto" />
           </div>
-          <button onClick={() => setMode('create')} className="w-full py-6 bg-white text-black text-xl font-light rounded-lg hover:bg-gray-200 transition-colors">
+          <button onClick={() => setMode('create')} className="w-full py-6 bg-gradient-to-r from-white to-gray-200 text-black text-xl font-light rounded-lg hover:from-gray-100 hover:to-gray-300 transition-all shadow-lg">
             Host Game
           </button>
-          <button onClick={() => setMode('join')} className="w-full py-6 bg-gray-800 text-white text-xl font-light rounded-lg hover:bg-gray-700 transition-colors">
+          <button onClick={() => setMode('join')} className="w-full py-6 bg-gradient-to-r from-red-600 to-red-700 text-white text-xl font-light rounded-lg hover:from-red-700 hover:to-red-800 transition-all shadow-lg hover:shadow-red-900/50">
             Join Game
           </button>
         </div>
@@ -121,7 +121,7 @@ export function Lobby({ onJoinGame }: LobbyProps) {
 
   if (mode === 'create') {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-red-950 flex items-center justify-center p-4">
         <div className="max-w-md w-full space-y-6">
           <button onClick={() => setMode('menu')} className="text-white font-light mb-4 hover:opacity-60 transition-opacity">← Back</button>
           <div className="flex items-center gap-3 mb-8">
@@ -131,10 +131,10 @@ export function Lobby({ onJoinGame }: LobbyProps) {
           <input
             type="text" placeholder="Your name" value={playerName}
             onChange={e => setPlayerName(e.target.value)}
-            className="w-full px-6 py-4 bg-gray-900 text-white font-light text-lg rounded-lg border border-gray-800 focus:border-red-600 outline-none transition-colors"
+            className="w-full px-6 py-4 bg-gray-900/50 text-white font-light text-lg rounded-lg border border-red-900/30 focus:border-red-600 outline-none transition-colors"
           />
           {error && <div className="text-red-500 font-light text-sm">{error}</div>}
-          <button onClick={handleCreateGame} disabled={loading} className="w-full py-4 bg-red-600 text-white text-lg font-light rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50">
+          <button onClick={handleCreateGame} disabled={loading} className="w-full py-4 bg-gradient-to-r from-red-600 to-red-700 text-white text-lg font-light rounded-lg hover:from-red-700 hover:to-red-800 transition-all shadow-lg hover:shadow-red-900/50 disabled:opacity-50">
             {loading ? 'Creating...' : 'Create Game'}
           </button>
         </div>
@@ -143,7 +143,7 @@ export function Lobby({ onJoinGame }: LobbyProps) {
   }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-red-950 flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-6">
         <button onClick={() => setMode('menu')} className="text-white font-light mb-4 hover:opacity-60 transition-opacity">← Back</button>
         <div className="flex items-center gap-3 mb-8">
@@ -153,16 +153,16 @@ export function Lobby({ onJoinGame }: LobbyProps) {
         <input
           type="text" placeholder="Your name" value={playerName}
           onChange={e => setPlayerName(e.target.value)}
-          className="w-full px-6 py-4 bg-gray-900 text-white font-light text-lg rounded-lg border border-gray-800 focus:border-red-600 outline-none transition-colors"
+          className="w-full px-6 py-4 bg-gray-900/50 text-white font-light text-lg rounded-lg border border-red-900/30 focus:border-red-600 outline-none transition-colors"
         />
         <input
           type="text" placeholder="Game code" value={gameCode}
           onChange={e => setGameCode(e.target.value.toUpperCase())}
-          className="w-full px-6 py-4 bg-gray-900 text-white font-light text-lg rounded-lg border border-gray-800 focus:border-red-600 outline-none transition-colors uppercase"
+          className="w-full px-6 py-4 bg-gray-900/50 text-white font-light text-lg rounded-lg border border-red-900/30 focus:border-red-600 outline-none transition-colors uppercase"
           maxLength={4}
         />
         {error && <div className="text-red-500 font-light text-sm">{error}</div>}
-        <button onClick={handleJoinGame} disabled={loading} className="w-full py-4 bg-red-600 text-white text-lg font-light rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50">
+        <button onClick={handleJoinGame} disabled={loading} className="w-full py-4 bg-gradient-to-r from-red-600 to-red-700 text-white text-lg font-light rounded-lg hover:from-red-700 hover:to-red-800 transition-all shadow-lg hover:shadow-red-900/50 disabled:opacity-50">
           {loading ? 'Joining...' : 'Join Game'}
         </button>
       </div>

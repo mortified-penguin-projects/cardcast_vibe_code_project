@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useGameState } from '../hooks/useGameState';
 import { PlayingCard } from './PlayingCard';
@@ -10,6 +11,7 @@ import {
   isBettingRoundComplete
 } from '../game/gameController';
 import { Card } from '../types/game';
+import { Zap } from 'lucide-react';
 
 interface HostViewProps {
   gameCode: string;
@@ -17,11 +19,14 @@ interface HostViewProps {
 
 export function HostView({ gameCode }: HostViewProps) {
   const { game, players, actions, loading } = useGameState(gameCode);
+  const [showAnimation, setShowAnimation] = useState(false);
 
   async function handleStartHand() {
     if (!game || players.length < 2) { alert('Need at least 2 players to start'); return; }
 
     const result = startNewHand(game, players);
+    setShowAnimation(true);
+    setTimeout(() => setShowAnimation(false), 600);
 
     await supabase.from('games').update({
       status: result.game.status,
@@ -48,8 +53,9 @@ export function HostView({ gameCode }: HostViewProps) {
   async function handleNextRound() {
     if (!game || !game.deck_state || game.deck_state.length === 0) return;
 
-    // FIX #3: pass players so next round resets current_player_index from dealer
     const result = advanceBettingRound(game, game.deck_state, players);
+    setShowAnimation(true);
+    setTimeout(() => setShowAnimation(false), 600);
 
     await supabase.from('games').update({
       betting_round: result.game.betting_round,
@@ -59,7 +65,6 @@ export function HostView({ gameCode }: HostViewProps) {
       deck_state: result.deck
     }).eq('id', game.id);
 
-    // Reset player bets for the new round
     for (const player of players) {
       if (player.status === 'active' || player.status === 'all-in') {
         await supabase.from('players').update({ current_bet: 0, last_action: null }).eq('id', player.id);
@@ -95,11 +100,11 @@ export function HostView({ gameCode }: HostViewProps) {
   const roundComplete = isBettingRoundComplete(players, game.current_bet);
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-red-950 text-white p-8">
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
-        <div className="flex justify-between items-center mb-8 pb-8 border-b border-gray-800">
+        <div className="flex justify-between items-center mb-8 pb-8 border-b border-red-900/30">
           <div className="flex items-center gap-4">
             <img src="/IMG_4336.PNG" alt="Cardcast" className="h-12 w-auto" />
             <div>
@@ -109,17 +114,18 @@ export function HostView({ gameCode }: HostViewProps) {
           </div>
           <div className="flex gap-4 items-center">
             {roundComplete && game.status === 'in_progress' && game.betting_round !== 'river' && (
-              <button onClick={handleNextRound} className="px-6 py-3 bg-white text-black font-light rounded-lg hover:bg-gray-200 transition-colors">
+              <button onClick={handleNextRound} className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-light rounded-lg hover:from-red-700 hover:to-red-800 transition-all shadow-lg hover:shadow-red-900/50">
                 Next Round →
               </button>
             )}
             {roundComplete && game.status === 'in_progress' && game.betting_round === 'river' && (
-              <button onClick={handleShowdown} className="px-6 py-3 bg-red-600 text-white font-light rounded-lg hover:bg-red-700 transition-colors">
+              <button onClick={handleShowdown} className="px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white font-light rounded-lg hover:from-orange-700 hover:to-red-700 transition-all shadow-lg hover:shadow-orange-900/50 flex items-center gap-2">
+                <Zap size={18} />
                 Showdown
               </button>
             )}
             {game.status === 'waiting' && players.length >= 2 && (
-              <button onClick={handleStartHand} className="px-6 py-3 bg-white text-black font-light rounded-lg hover:bg-gray-200 transition-colors">
+              <button onClick={handleStartHand} className="px-6 py-3 bg-gradient-to-r from-white to-gray-200 text-black font-light rounded-lg hover:from-gray-100 hover:to-gray-300 transition-all shadow-lg">
                 Start Hand
               </button>
             )}
@@ -148,7 +154,7 @@ export function HostView({ gameCode }: HostViewProps) {
                 <div className="text-xs font-light opacity-60 mt-1">{player.last_action}</div>
               )}
               {player.current_bet > 0 && (
-                <div className="text-xs font-light text-yellow-400 mt-1">Bet: {player.current_bet}</div>
+                <div className="text-xs font-light text-orange-400 mt-1">Bet: {player.current_bet}</div>
               )}
               {player.status === 'folded' && (
                 <div className="text-xs font-light opacity-40 mt-1">folded</div>
@@ -165,7 +171,9 @@ export function HostView({ gameCode }: HostViewProps) {
           {game.community_cards && game.community_cards.length > 0 ? (
             <>
               {game.community_cards.map((card: Card, index: number) => (
-                <PlayingCard key={index} card={card} size="large" />
+                <div key={index} className={`transition-all duration-300 ${showAnimation ? 'scale-110' : 'scale-100'}`}>
+                  <PlayingCard card={card} size="large" />
+                </div>
               ))}
               {Array.from({ length: 5 - game.community_cards.length }).map((_, i) => (
                 <PlayingCard key={`empty-${i}`} size="large" />
@@ -177,8 +185,8 @@ export function HostView({ gameCode }: HostViewProps) {
         </div>
 
         {/* Pot */}
-        <div className="text-center mb-8">
-          <div className="text-6xl font-light mb-2">{game.pot}</div>
+        <div className="text-center mb-8 bg-gradient-to-r from-red-900/20 to-orange-900/20 rounded-lg p-6 border border-red-900/30">
+          <div className="text-6xl font-light mb-2 text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">{game.pot}</div>
           <div className="text-xl font-light opacity-60">POT</div>
           {game.current_bet > 0 && (
             <div className="text-lg font-light opacity-60 mt-2">Current Bet: {game.current_bet}</div>
@@ -195,7 +203,7 @@ export function HostView({ gameCode }: HostViewProps) {
         )}
 
         {/* Action log */}
-        <div className="border-t border-gray-800 pt-4">
+        <div className="border-t border-red-900/30 pt-4">
           <div className="text-sm font-light opacity-60 mb-2">Recent Actions</div>
           <div className="space-y-1">
             {actions.slice(0, 5).map(action => {
